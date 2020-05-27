@@ -54,6 +54,16 @@ const ingredients = (req, res, next) => {
   };
 
 
+
+
+
+
+
+
+
+
+
+
   const getRecipes = async (req, res, next) => {
     try{
       const result = await pool
@@ -79,6 +89,7 @@ const ingredients = (req, res, next) => {
       const result = await pool
         .query('SELECT * FROM category_recipe FULL JOIN category ON category_id=category.id;')
     req.categories = result.rows;
+    console.log(req.categories)
     next();
     }catch(e){
     console.log(e);
@@ -87,10 +98,17 @@ const ingredients = (req, res, next) => {
   const mapIngredients= (req, res, next) => {
     const fullResponse = req.recipes.map((recipe) => {
       recipe.ingredients = [];
+      recipe.categories=[];
       for (let index in req.recipesIngredients ) {
         if (req.recipesIngredients[index].recipe_id === recipe.id) {
           delete req.recipesIngredients[index].recipe_id;
           recipe.ingredients.push(req.recipesIngredients[index]);
+        }
+      }
+      for (let catIndex in req.categories ) {
+        if (req.categories[catIndex].recipe_id === recipe.id) {
+          delete req.categories[catIndex].recipe_id;
+          recipe.categories.push(req.categories[catIndex]);
         }
       }
       return recipe;
@@ -150,7 +168,7 @@ router.get("/category", category);
 router.get("/recipe", recipe);
 router.get("/category-recipe", categoryRecipe);
 router.get("/ingredient-unit", ingredientUnit);
-router.get("/recipe-with-ingredients", getRecipes, getIngredients,  mapIngredients);
+router.get("/recipe-with-ingredients", getRecipes, getIngredients,getCategories,  mapIngredients);
 router.get("/recipe-with-categories", getRecipes, getCategories, mapCategories)
 router.get("/user", user);
 router.get("/saved-recipes", savedRecipes, getIngredients,  mapIngredients);
