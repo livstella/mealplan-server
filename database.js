@@ -1,11 +1,14 @@
 const { Pool } = require("pg");
+require('dotenv').config();
+
+
 
 const pool = new Pool({
-  user: "pgsjpaws",
-  host: "rogue.db.elephantsql.com",
-  database: "pgsjpaws",
-  password: "vvGKkLKdYYo-uJec1lgPmOVmhXT59muM",
-  port: 5432,
+  user: process.env.DBuser,
+  host: process.env.DBhost,
+  database: process.env.DBdatabase,
+  password: process.env.DBpassword,
+  port: process.env.DBport,
 });
 
 module.exports = pool;
