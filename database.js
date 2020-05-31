@@ -1,15 +1,15 @@
 const { Pool } = require("pg");
+require('dotenv').config();
 
-const aws = require('aws-sdk');
 
 
 
 const pool = new Pool({
-  user: process.env.user,
-  host: process.env.host,
-  database: process.env.database,
-  password: process.env.password,
-  port: process.env.port,
+  user: "pgsjpaws",
+  host: "rogue.db.elephantsql.com",
+  database: "pgsjpaws",
+  password: "qOyZbhOmpqF9x8DwsUUfAEzu4-otE5eM",
+  port: 5432,
 });
 
 module.exports = pool;
