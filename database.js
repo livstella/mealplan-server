@@ -7,7 +7,7 @@ const pool = new Pool({
   user: "pgsjpaws",
   host: "rogue.db.elephantsql.com",
   database: "pgsjpaws",
-  password: "qOyZbhOmpqF9x8DwsUUfAEzu4-otE5eM",
+  password: process.env.DBpassword,
   port: 5432,
 });
 
