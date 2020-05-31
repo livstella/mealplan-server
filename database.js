@@ -5,11 +5,11 @@ const aws = require('aws-sdk');
 
 
 const pool = new Pool({
-  user: process.env.DBuser,
-  host: process.env.DBhost,
+  user: process.env.user,
+  host: process.env.host,
   database: process.env.database,
   password: process.env.password,
-  port: process.env.DBport,
+  port: process.env.port,
 });
 
 module.exports = pool;
