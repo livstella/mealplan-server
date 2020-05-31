@@ -1,8 +1,9 @@
 const express = require("express");
-const routes = require("./router_components/endpoints.js")
-
+const routes = require("./router_components/endpoints.js");
+var cors = require('cors');
 
 const app = express();
+app.use(cors());
 
 app.get('/test', (req, res) => {
     res.send('Hello')
