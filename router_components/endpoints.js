@@ -53,17 +53,6 @@ const ingredients = (req, res, next) => {
       .catch((e) => console.log(e));
   };
 
-
-
-
-
-
-
-
-
-
-
-
   const getRecipes = async (req, res, next) => {
     try{
       const result = await pool
