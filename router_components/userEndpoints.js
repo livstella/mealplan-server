@@ -25,8 +25,22 @@ const createUser = (req, res, next) => {
       .then((data) => res.json(data.rows))
       .catch((e) => console.log(e));
   };
+
+  const saveRecipe = (req, res, next) => {
+       const { id } = req.body
+       pool
+        .query(
+            "INSERT INTO saved_recipes(recipe_id) VALUES($1) RETURNING *;",
+            [id])
+            .then((data) => res.json(data.rows))
+            .catch((e) => console.log(e));
+  }
+
+
+
   router.get("/", user);
   router.post("/create", createUser);
+  router.post("/save-recipe", saveRecipe);
   
   
   module.exports = router;

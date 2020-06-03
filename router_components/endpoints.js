@@ -134,7 +134,7 @@ const ingredients = (req, res, next) => {
 
   const savedRecipes = (req, res, next) => {
     pool
-      .query('SELECT user_id, recipe.id, recipe.name, recipe.img_url, recipe.description, author_site.name AS author FROM saved_recipes FULL JOIN recipe ON recipe.id=recipe_id FULL JOIN author_site on author_id=author_site.id;')
+      .query('SELECT user_id, recipe.id, recipe.name, recipe.img_url, recipe.description, author_site.name AS author FROM saved_recipes INNER JOIN recipe ON recipe.id=recipe_id INNER JOIN author_site on author_id=author_site.id;')
       .then((data) => res.json(data.rows))
       .catch((e) => console.log(e));
   };
