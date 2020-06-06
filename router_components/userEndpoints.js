@@ -28,11 +28,14 @@ const createUser = (req, res, next) => {
   };
 
   const saveRecipe = (req, res, next) => {
-       const { id } = req.body
+       const { id } = req.body;
+       const { authorization } = req.headers;
+       const verification = jwt.verify(authorization, "mySecretKey");
+       console.log(verification.id)
        pool
         .query(
-            "INSERT INTO saved_recipes(recipe_id) VALUES($1) RETURNING *;",
-            [id])
+            "INSERT INTO saved_recipes(recipe_id, user_id) VALUES($1, $2) RETURNING *;",
+            [id, verification.id])
             .then((data) => res.json(data.rows))
             .catch((e) => console.log(e));
   }
@@ -49,11 +52,12 @@ const createUser = (req, res, next) => {
         "SELECT * FROM users WHERE name=$1;",
         [username])
         .then((result) => {
+            console.log(result.rows[0].id)
             if(result.rowCount <= 0){
                 res.send("you don't exist")
             }
            else if(password === result.rows[0].password){
-            const token = jwt.sign({username}, "mySecretKey", {
+            const token = jwt.sign({id: result.rows[0].id}, "mySecretKey", {
                 expiresIn: "1 day",
             });
             res.send(token);
