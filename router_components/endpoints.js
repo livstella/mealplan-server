@@ -140,8 +140,12 @@ const ingredients = (req, res, next) => {
       .catch((e) => console.log(e));
   };
   const shoppingList = (req, res, next) => {
+    const { authorization } = req.headers;
+    verification = jwt.verify(authorization, "mySecretKey");
+    console.log(verification.id)
     pool
-      .query('SELECT ingredient.name , amount, unit.name FROM shopping_list FULL JOIN saved_recipes ON saved_recipes_id=saved_recipes.id FULL JOIN recipe ON recipe.id=recipe_id FULL JOIN ingredient_unit ON ingredient_unit.recipe_id=recipe.id FULL JOIN unit ON unit.id=unit_id FULL JOIN ingredient ON ingredient.id=ingredient_id;')
+      .query('SELECT ingredient.name AS ingredient , amount, unit.name AS unit, saved_recipes.user_id AS user_id FROM shopping_list FULL JOIN saved_recipes ON saved_recipes_id=saved_recipes.id FULL JOIN recipe ON recipe.id=recipe_id FULL JOIN ingredient_unit ON ingredient_unit.recipe_id=recipe.id FULL JOIN unit ON unit.id=unit_id FULL JOIN ingredient ON ingredient.id=ingredient_id WHERE user_id=$1 GROUP BY ingredient, amount, unit, user_id;',
+      [verification.id])
       .then((data) => res.json(data.rows))
       .catch((e) => console.log(e));
   };

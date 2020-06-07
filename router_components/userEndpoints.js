@@ -14,7 +14,7 @@ const user = (req, res, next) => {
 
 const createUser = (req, res, next) => {
     const { email, name, password } = req.body;
-    if (!email || !name || !password) {
+    if (!name || !password) {
       res.sendStatus(400);
       return;
     }
