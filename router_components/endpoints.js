@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../database");
+const jwt = require("jsonwebtoken");
 
 const ingredients = (req, res, next) => {
     pool
@@ -145,6 +146,19 @@ const ingredients = (req, res, next) => {
       .catch((e) => console.log(e));
   };
 
+  const getSavedRecipes =(req, res, next) => {
+    const { authorization } = req.headers;
+    verification = jwt.verify(authorization, "mySecretKey");
+    console.log(verification.id)
+    pool
+     .query(
+         "SELECT user_id, recipe.id, recipe.name, recipe.img_url, recipe.description, author_site.name AS author FROM saved_recipes INNER JOIN recipe ON recipe.id=recipe_id INNER JOIN author_site on author_id=author_site.id WHERE user_id=$1;",
+         [verification.id])
+         .then((data) => res.json(data.rows))
+         .catch((e) => console.log(e));
+  }
+
+
 
   
 
@@ -164,5 +178,6 @@ router.get("/recipe-with-categories", getRecipes, getCategories, mapCategories)
 router.get("/user", user);
 router.get("/saved-recipes", savedRecipes, getIngredients,  mapIngredients);
 router.get("/shopping", shoppingList);
+router.get("/get-saved-recipes", getSavedRecipes, getIngredients,  mapIngredients);
 
 module.exports = router;

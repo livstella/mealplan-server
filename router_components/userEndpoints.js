@@ -31,7 +31,6 @@ const createUser = (req, res, next) => {
        const { id } = req.body;
        const { authorization } = req.headers;
        const verification = jwt.verify(authorization, "mySecretKey");
-       console.log(verification.id)
        pool
         .query(
             "INSERT INTO saved_recipes(recipe_id, user_id) VALUES($1, $2) RETURNING *;",
@@ -52,7 +51,6 @@ const createUser = (req, res, next) => {
         "SELECT * FROM users WHERE name=$1;",
         [username])
         .then((result) => {
-            console.log(result.rows[0].id)
             if(result.rowCount <= 0){
                 res.send("you don't exist")
             }
@@ -86,11 +84,13 @@ const createUser = (req, res, next) => {
 
 
 
+
   router.get("/", user);
   router.post("/create", createUser);
   router.post("/save-recipe", saveRecipe);
   router.post("/login", login);
   router.get("/test", verify, hello);
+  
 
   
   
