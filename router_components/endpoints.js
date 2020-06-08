@@ -135,14 +135,16 @@ const ingredients = (req, res, next) => {
 
   const savedRecipes = (req, res, next) => {
     pool
-      .query('SELECT user_id, recipe.id, recipe.name, recipe.img_url, recipe.description, author_site.name AS author FROM saved_recipes INNER JOIN recipe ON recipe.id=recipe_id INNER JOIN author_site on author_id=author_site.id;')
+      .query('SELECT saved_recipes.id, user_id, recipe.id AS recipe_id, recipe.name, recipe.img_url, recipe.description, author_site.name AS author FROM saved_recipes INNER JOIN recipe ON recipe.id=recipe_id INNER JOIN author_site on author_id=author_site.id;')
       .then((data) => res.json(data.rows))
       .catch((e) => console.log(e));
   };
+
+
   const shoppingList = (req, res, next) => {
     const { authorization } = req.headers;
     verification = jwt.verify(authorization, "mySecretKey");
-    console.log(verification.id)
+
     pool
       .query('SELECT ingredient.name AS ingredient , amount, unit.name AS unit, saved_recipes.user_id AS user_id FROM shopping_list FULL JOIN saved_recipes ON saved_recipes_id=saved_recipes.id FULL JOIN recipe ON recipe.id=recipe_id FULL JOIN ingredient_unit ON ingredient_unit.recipe_id=recipe.id FULL JOIN unit ON unit.id=unit_id FULL JOIN ingredient ON ingredient.id=ingredient_id WHERE user_id=$1 GROUP BY ingredient, amount, unit, user_id;',
       [verification.id])
@@ -150,13 +152,16 @@ const ingredients = (req, res, next) => {
       .catch((e) => console.log(e));
   };
 
+
+
+
   const getSavedRecipes =(req, res, next) => {
     const { authorization } = req.headers;
     verification = jwt.verify(authorization, "mySecretKey");
-    console.log(verification.id)
+    
     pool
      .query(
-         "SELECT user_id, recipe.id, recipe.name, recipe.img_url, recipe.description, author_site.name AS author FROM saved_recipes INNER JOIN recipe ON recipe.id=recipe_id INNER JOIN author_site on author_id=author_site.id WHERE user_id=$1;",
+         "SELECT saved_recipes.id AS savedID, user_id, recipe.id, recipe.name, recipe.img_url, recipe.description, author_site.name AS author FROM saved_recipes INNER JOIN recipe ON recipe.id=recipe_id INNER JOIN author_site on author_id=author_site.id WHERE user_id=$1;",
          [verification.id])
          .then((data) => res.json(data.rows))
          .catch((e) => console.log(e));

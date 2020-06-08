@@ -82,6 +82,17 @@ const createUser = (req, res, next) => {
   }
 
 
+  const deleteRecipe=(req, res, next) => {
+    const { id } = req.body;
+    pool
+     .query(
+        "DELETE FROM saved_recipes WHERE id=$1;", 
+        [id])
+         .then((data) => res.json(data.rows))
+         .catch((e) => console.log(e));
+  }
+
+
 
 
 
@@ -90,6 +101,7 @@ const createUser = (req, res, next) => {
   router.post("/save-recipe", saveRecipe);
   router.post("/login", login);
   router.get("/test", verify, hello);
+  router.delete("/delete-recipe", deleteRecipe);
   
 
   
