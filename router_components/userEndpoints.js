@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../database");
 const jwt = require("jsonwebtoken");
+const bcrypt = require('bcrypt')
 
 
 const user = (req, res, next) => {
@@ -12,20 +13,24 @@ const user = (req, res, next) => {
   };
 
 
-const createUser = (req, res, next) => {
+const createUser = async (req, res, next) => {
     const { email, name, password } = req.body;
     if (!name || !password) {
       res.sendStatus(400);
       return;
     }
+    try{
+      const hashedPassword = await bcrypt.hash(password, 10)
+      console.log(hashedPassword)
+    
     pool
       .query(
         "INSERT INTO users(email, name, password) VALUES($1, $2, $3) RETURNING *;",
-        [email, name, password]
-      )
-      .then((data) => res.json(data.rows))
-      .catch((e) => console.log(e));
-  };
+        [email, name, hashedPassword]
+      ).then((data) => res.json(data.rows))
+    }catch(e){
+      console.log(e);
+    }};
 
   const saveRecipe = (req, res, next) => {
        const { id } = req.body;
@@ -54,7 +59,7 @@ const createUser = (req, res, next) => {
             if(result.rowCount <= 0){
                 res.send("you don't exist")
             }
-           else if(password === result.rows[0].password){
+           else if( bcrypt.compare( password, result.rows[0].password)){
             const token = jwt.sign({id: result.rows[0].id}, "mySecretKey", {
                 expiresIn: "1 day",
             });
