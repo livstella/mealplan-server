@@ -57,7 +57,7 @@ const ingredients = (req, res, next) => {
   const getRecipes = async (req, res, next) => {
     try{
       const result = await pool
-        .query('SELECT recipe.id, recipe.name, recipe.img_url, recipe.description, author_site.name AS author FROM recipe FULL JOIN author_site on author_id=author_site.id;')
+        .query('SELECT recipe.id, recipe.name, recipe.img_url, recipe.description, author_site.name AS author FROM recipe INNER JOIN author_site on author_id=author_site.id;')
     req.recipes = result.rows;
     next();
     }catch(e){
@@ -67,7 +67,7 @@ const ingredients = (req, res, next) => {
   const getIngredients = async (req, res, next) => {
     try{
       const result = await pool
-        .query('SELECT  amount, unit.name AS unit,  ingredient.name AS ingredient, recipe_id FROM ingredient_unit FULL JOIN unit ON unit_id=unit.id FULL JOIN ingredient ON ingredient_id=ingredient.id')
+        .query('SELECT  amount, unit.name AS unit,  ingredient.name AS ingredient, recipe_id FROM ingredient_unit INNER JOIN unit ON unit_id=unit.id INNER JOIN ingredient ON ingredient_id=ingredient.id')
     req.recipesIngredients = result.rows;
     next();
     }catch(e){
