@@ -3,12 +3,23 @@ const router = express.Router();
 const pool = require("../database");
 const jwt = require("jsonwebtoken");
 
-const ingredients = (req, res, next) => {
+/*const ingredients = (req, res, next) => {
     pool
       .query('SELECT * FROM "ingredient";')
       .then((data) => res.json(data.rows))
       .catch((e) => console.log(e));
   };
+*/
+
+// Reformat as ES6
+const ingredients = async (req, res, next) => {
+    try{
+        const query = await pool.query('SELECT * FROM "ingredient";');
+        res.json(query.data.rows);
+    }catch(e){
+        console.log(e)
+    }
+ };
 
   const units = (req, res, next) => {
     pool
