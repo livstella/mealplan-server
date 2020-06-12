@@ -45,29 +45,29 @@ const createUser = async (req, res, next) => {
   }
 
 
- const login= (req, res, next) => {
+ const login= async (req, res, next) => {
     const { username, password } = req.body;
     if (!username || !password) {
         res.sendStatus(401);
         return;
-      } 
-      pool
-      .query(
-        "SELECT * FROM users WHERE name=$1;",
-        [username])
-        .then((result) => {
-            if(result.rowCount <= 0){
-                res.send("you don't exist")
-            }
-           else if( bcrypt.compare( password, result.rows[0].password)){
-            const token = jwt.sign({id: result.rows[0].id}, "mySecretKey", {
+     }
+     try{
+         const result = pool.query("SELECT * FROM users WHERE name=$1;", [username]);
+         if(result.rowCount <= 0){
+                res.status(404).send("you don't exist");
+                return;
+          }else if(await bcrypt.compare( password, result.rows[0].password)){
+            const token = await jwt.sign({id: result.rows[0].id}, "mySecretKey", {
                 expiresIn: "1 day",
             });
             res.send(token);
-           }else{res.send(401)}
-            })
-            .catch((e) => console.log(e));
-        };
+           }else{
+               res.send(401)}
+            }
+     }catch(e){
+        console.log(e);
+     }
+ };
     
 
         
